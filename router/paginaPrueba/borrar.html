@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Barras de Progreso Dinámicas</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    .mb-4 {
+      margin-bottom: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div id="progressContainer"></div>
+
+  <script>
+    // Función para crear una barra de progreso dinámicamente
+    function createProgressBar(label, percentage) {
+      var container = document.createElement("div");
+      container.className = "mb-4";
+
+      var labelElement = document.createElement("p");
+      labelElement.textContent = label;
+      container.appendChild(labelElement);
+
+      var progressBar = document.createElement("div");
+      progressBar.className = "progress";
+
+      var progress = document.createElement("div");
+      progress.className = "progress-bar";
+      progress.style.width = percentage + "%";
+      progress.textContent = percentage + "%";
+      progress.setAttribute("role", "progressbar");
+      progress.setAttribute("aria-valuenow", percentage);
+      progress.setAttribute("aria-valuemin", "0");
+      progress.setAttribute("aria-valuemax", "100");
+
+      progressBar.appendChild(progress);
+      container.appendChild(progressBar);
+
+      return container;
+    }
+
+    // Obtener los datos de la API
+    fetch("http://localhost:8000/api/v1/sensores/piscina=1")
+      .then(response => response.json())
+      .then(data => {
+        var progressContainer = document.getElementById("progressContainer");
+
+        // Crear una barra de progreso para cada dato sensor
+        for (var i = 0; i < data.length; i++) {
+          var sensor = data[i];
+          var label = sensor.tipo;
+          var percentage = sensor.rango;
+
+          var progressBar = createProgressBar(label, percentage);
+          progressContainer.appendChild(progressBar);
+        }
+      })
+      .catch(error => {
+        console.error("Error al obtener los datos de la API:", error);
+      });
+  </script>
+</body>
+</html>
+

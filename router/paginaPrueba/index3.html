@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-gap: 20px;
+    }
+
+    .card {
+      border: 1px solid #ccc;
+      padding: 20px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Piscinas</h1>
+
+  <div class="container" id="data-container"></div>
+
+  <script>
+    // Realizar la petición a la API
+    fetch('http://localhost:8000/api/v1/piscinas/')
+      .then(response => response.json())
+      .then(data => {
+        // Obtener el contenedor donde se mostrará la información
+        const container = document.getElementById('data-container');
+
+        // Recorrer los datos recibidos de la API
+        data.forEach(item => {
+          // Crear una tarjeta para cada elemento
+          const card = document.createElement('div');
+          card.classList.add('card');
+
+          // Crear el contenido de la tarjeta
+          const title = document.createElement('h2');
+          title.textContent = item.Ubicacion;
+
+          const description = document.createElement('p');
+          description.textContent = item.fecha_monitoreo;
+
+          // Agregar los elementos a la tarjeta
+          card.appendChild(title);
+          card.appendChild(description);
+
+          // Agregar la tarjeta al contenedor principal
+          container.appendChild(card);
+        });
+      })
+      .catch(error => console.error(error));
+  </script>
+</body>
+</html>
+
