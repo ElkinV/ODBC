@@ -64,10 +64,10 @@ async def get_piscinas_by_id(id:int):
     
     
 @router.post('/api/v1/piscinas/', tags=['Piscinas'])#Crear piscinas
-async def create_piscinas(id_piscina:int= Body(), fecha_monitoreo:str= Body(), Ubicacion:str=Body(), Codigo:int=Body()):
+async def create_piscinas(fecha_monitoreo:str= Body(),Descripcion:str=Body(), Ubicacion:str=Body(), Codigo:int=Body()):
     cnx= database.cnx
     cursor= cnx.cursor()
-    cursor.execute("INSERT INTO piscinas(`ID_PISCINAS`, `FECHA_MONITOREO`, `UBICACION`, `codigo`) VALUES (%s,%s,%s,%s)",(id_piscina, fecha_monitoreo, Ubicacion, Codigo))
+    cursor.execute("INSERT INTO piscinas(`FECHA_MONITOREO`, `UBICACION`,`Descripcion`, `codigo`) VALUES (%s,%s,%s,%s)",(fecha_monitoreo, Descripcion, Ubicacion, Codigo))
     cnx.commit()
     cursor.close()
     return await get_piscinas()
@@ -124,6 +124,16 @@ async def get_parameters_by_id(id:int):
             raise HTTPException(status_code=404, detail="Item not found")
         else:
             return p
+        
+@router.patch('/api/v1/parametros/{id}', tags=['Parametros'])#Actualizar parametros
+async def update_parametros(id:int,valor:int=Body(), fecha:str=Body()):
+    cnx= database.cnx
+    cursor= cnx.cursor()
+    cursor.execute("UPDATE historial_de_parametros SET VALOR_PARAMETRO=%s, FECHA_PARAMETRO=%s WHERE ID_HISTORIAL=%s",(valor, fecha, id))
+    cnx.commit()
+    cursor.close()
+    return await get_parameters()
+
 
 @router.get("/api/v1/clientes/", tags=["Clientes"])
 def get_clientes():
@@ -134,7 +144,7 @@ def get_clientes():
     clientes=[]
     
     for row in result:
-        clientes.append({'id_cliente': row[0], 'nombre_cliente': row[1], 'correo': row[2], "telefono":row[3], "direccion":row[4]})
+        clientes.append({'nombre': row[0], 'codigo': row[1], 'apellido': row[2], "email":row[3], "contraseña":row[4]})
     
     cursor.close()
     return clientes
